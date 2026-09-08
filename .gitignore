@@ -1,0 +1,28 @@
+# Environment
+.env
+
+# Virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# uv
+.uv-cache/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Alembic (keep versions, ignore nothing here actually)
+# alembic/versions/ — DO NOT ignore, needed for migration history
+
+# Logs
+*.log
