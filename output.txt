@@ -1,94 +1,106 @@
 ==================================================
-FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\crud\category.py
+FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\crud\product.py
 ==================================================
-
-
-
-
-
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
+from app.model.product import Product
+from app.schema.product import ProductCreate
+
+
+def create_product(db:Session,product:ProductCreate):
+    db_product=Product(name=product.name,sku=product.sku,price=product.price,quantity=product.quantity,category_id=product.category_id)
+    db.add(db_product)
+    db.commit()
+    db.refresh(db_product)
+    return db_product
+
+def get_product(db:Session,product_id:int):
+    db_product=db.query(Product).filter(Product.id==product_id).first()
+    if not db_product:
+        raise HTTPException(status_code=404,detail="Product Not Found")
+    return db_product
+
+def get_products(db:Session):
+    return db.query(Product).all()
+
+==================================================
+FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\model\product.py
+==================================================
+from sqlalchemy import Column, ForeignKey, Integer, Numeric, String
+from sqlalchemy.orm import relationship
+
+from app.db.base import Base
 from app.model.category import Category
 
 
-def create_category(db:Session,category:Category):
-    db_category=Category(name=Category.name)
-    db.add(db_category)
-    db.commit()
-    db.refresh(db_category)
-    return db_category
-
-def get_category(db:Session,category_id:int):
-    db_category=db.query(Category).filter(Category.id==category_id)
-    if not db_category:
-        raise HTTPException(status_code=404,detail="Category Not Found")
-    return db_category
-
-def get_categories(db:Session):
-    return db.query(Category).all()
-
-==================================================
-FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\model\category.py
-==================================================
-
-
-
-from sqlalchemy import Column, Integer, String
-
-from app.db.base import Base
-
-
-class Category(Base):
-    __tablename__="categories"
+class Product(Base):
+    __tablename__="products"
     id=Column(Integer,primary_key=True,index=True)
     name=Column(String,nullable=False,unique=True)
+    sku=Column(String,unique=True,nullable=False)
+    price=Column(Numeric(10,2))
+    quantity=Column(Integer)
+    category_id=Column(Integer,ForeignKey(Category.id))
+    category=relationship("Category",back_populates="products")
+    
 
 ==================================================
-FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\router\category.py
+FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\router\product.py
 ==================================================
+
+
 
 
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.crud.category import create_category, get_categories, get_category
+from app.crud.product import create_product, get_product, get_products
 from app.db.session import get_db
-from app.model.category import Category
-from app.schema.category import CategoryResponse
+from app.schema.product import ProductCreate, ProductResponse
 
 
-router=APIRouter(prefix="/category",tags=["Category"])
+router=APIRouter(prefix="/products",tags=["Product"])
 
 
-@router.post("/",response_model=CategoryResponse)
-def add_category(category:Category,db:Session=Depends(get_db)):
-    return create_category(db=db,category=category)
+@router.post("/",response_model=ProductResponse)
+def add_product(product:ProductCreate,db:Session=Depends(get_db)):
+    return create_product(db=db,product=product)
 
-@router.get("/{category_id}",response_model=CategoryResponse)
-def read_category(category_id:int,db:Session=Depends(get_db)):
-    return get_category(category_id=category_id,db=db)
 
-@router.get("/",response_model=list[CategoryResponse])
-def read_categories(db:Session=Depends(get_db)):
-    return get_categories(db=db)
+@router.get("/{product_id}",response_model=ProductResponse)
+def read_product(product_id:int,db:Session=Depends(get_db)):
+    return get_product(product_id=product_id,db=db)
+
+@router.get("/",response_model=list[ProductResponse])
+def read_products(db:Session=Depends(get_db)):
+    return get_products(db=db)
 
 ==================================================
-FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\schema\category.py
+FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\schema\product.py
 ==================================================
-
-
+from decimal import Decimal
 
 from pydantic import BaseModel
 
 
-class CategoryCreate(BaseModel):
+class ProductCreate(BaseModel):
     name:str
+    sku:str
+    price:Decimal
+    quantity:int
+    category_id:int 
 
-class CategoryResponse(BaseModel):
+
+
+class ProductResponse(BaseModel):
     id:int
     name:str
+    sku:str
+    price:Decimal
+    quantity:int
+    category_id:int 
 
     class Config:
         from_attributes=True
