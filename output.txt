@@ -1,0 +1,95 @@
+==================================================
+FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\crud\category.py
+==================================================
+
+
+
+
+
+from fastapi import HTTPException
+from sqlalchemy.orm import Session
+
+from app.model.category import Category
+
+
+def create_category(db:Session,category:Category):
+    db_category=Category(name=Category.name)
+    db.add(db_category)
+    db.commit()
+    db.refresh(db_category)
+    return db_category
+
+def get_category(db:Session,category_id:int):
+    db_category=db.query(Category).filter(Category.id==category_id)
+    if not db_category:
+        raise HTTPException(status_code=404,detail="Category Not Found")
+    return db_category
+
+def get_categories(db:Session):
+    return db.query(Category).all()
+
+==================================================
+FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\model\category.py
+==================================================
+
+
+
+from sqlalchemy import Column, Integer, String
+
+from app.db.base import Base
+
+
+class Category(Base):
+    __tablename__="categories"
+    id=Column(Integer,primary_key=True,index=True)
+    name=Column(String,nullable=False,unique=True)
+
+==================================================
+FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\router\category.py
+==================================================
+
+
+
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.crud.category import create_category, get_categories, get_category
+from app.db.session import get_db
+from app.model.category import Category
+from app.schema.category import CategoryResponse
+
+
+router=APIRouter(prefix="/category",tags=["Category"])
+
+
+@router.post("/",response_model=CategoryResponse)
+def add_category(category:Category,db:Session=Depends(get_db)):
+    return create_category(db=db,category=category)
+
+@router.get("/{category_id}",response_model=CategoryResponse)
+def read_category(category_id:int,db:Session=Depends(get_db)):
+    return get_category(category_id=category_id,db=db)
+
+@router.get("/",response_model=list[CategoryResponse])
+def read_categories(db:Session=Depends(get_db)):
+    return get_categories(db=db)
+
+==================================================
+FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\schema\category.py
+==================================================
+
+
+
+from pydantic import BaseModel
+
+
+class CategoryCreate(BaseModel):
+    name:str
+
+class CategoryResponse(BaseModel):
+    id:int
+    name:str
+
+    class Config:
+        from_attributes=True
+
