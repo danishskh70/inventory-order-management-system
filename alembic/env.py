@@ -17,6 +17,7 @@ from app.model.permission import Permission
 from app.model.role_permission import RolePermission
 from app.model.category import Category
 from app.model.product import Product
+from app.model.customer import Customer
 
 
 

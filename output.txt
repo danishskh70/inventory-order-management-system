@@ -1,106 +1,86 @@
 ==================================================
-FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\crud\product.py
+FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\crud\customer.py
 ==================================================
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.model.product import Product
-from app.schema.product import ProductCreate
+from app.model.customer import Customer
+from app.schema.customer import CustomerCreate
 
 
-def create_product(db:Session,product:ProductCreate):
-    db_product=Product(name=product.name,sku=product.sku,price=product.price,quantity=product.quantity,category_id=product.category_id)
-    db.add(db_product)
+def create_customer(db:Session,customer:CustomerCreate):
+    db_customer=Customer(name=customer.name,email=customer.email,phone=customer.phone)
+    db.add(db_customer)
     db.commit()
-    db.refresh(db_product)
-    return db_product
+    db.refresh(db_customer)
+    return db_customer
 
-def get_product(db:Session,product_id:int):
-    db_product=db.query(Product).filter(Product.id==product_id).first()
-    if not db_product:
-        raise HTTPException(status_code=404,detail="Product Not Found")
-    return db_product
+def get_customer(db:Session,customer_id:int):
+    db_customer=db.query(Customer).filter(Customer.id==customer_id).first()
+    if not db_customer:
+        raise HTTPException(status_code=404,detail="Customer not found")
+    return db_customer
 
-def get_products(db:Session):
-    return db.query(Product).all()
+def get_customers(db:Session):
+    return db.query(Customer).all()
 
 ==================================================
-FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\model\product.py
+FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\model\customer.py
 ==================================================
-from sqlalchemy import Column, ForeignKey, Integer, Numeric, String
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String
 
 from app.db.base import Base
-from app.model.category import Category
 
 
-class Product(Base):
-    __tablename__="products"
+class Customer(Base):
+    __tablename__="customers"
     id=Column(Integer,primary_key=True,index=True)
-    name=Column(String,nullable=False,unique=True)
-    sku=Column(String,unique=True,nullable=False)
-    price=Column(Numeric(10,2))
-    quantity=Column(Integer)
-    category_id=Column(Integer,ForeignKey(Category.id))
-    category=relationship("Category",back_populates="products")
-    
+    name=Column(String,nullable=False)
+    email=Column(String,nullable=False,unique=True)
+    phone=Column(String)
 
 ==================================================
-FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\router\product.py
+FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\router\customer.py
 ==================================================
-
-
-
-
-
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.crud.product import create_product, get_product, get_products
+from app.crud.customer import create_customer, get_customer, get_customers
 from app.db.session import get_db
-from app.schema.product import ProductCreate, ProductResponse
+from app.schema.customer import CustomerCreate, CustomerResponse
 
 
-router=APIRouter(prefix="/products",tags=["Product"])
+router=APIRouter(prefix="/customers",tags=["Customers"])
 
+@router.post("/",response_model=CustomerResponse)
+def add_customer(customer:CustomerCreate,db:Session=Depends(get_db)):
+    return create_customer(db=db,customer=customer)
 
-@router.post("/",response_model=ProductResponse)
-def add_product(product:ProductCreate,db:Session=Depends(get_db)):
-    return create_product(db=db,product=product)
+@router.get("/{customer_id}",response_model=CustomerResponse)
+def read_customer(customer_id:int,db:Session=Depends(get_db)):
+    return get_customer(customer_id=customer_id,db=db)
 
-
-@router.get("/{product_id}",response_model=ProductResponse)
-def read_product(product_id:int,db:Session=Depends(get_db)):
-    return get_product(product_id=product_id,db=db)
-
-@router.get("/",response_model=list[ProductResponse])
-def read_products(db:Session=Depends(get_db)):
-    return get_products(db=db)
+@router.get("/",response_model=list[CustomerResponse])
+def read_customers(db:Session=Depends(get_db)):
+    return get_customers(db=db)
 
 ==================================================
-FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\schema\product.py
+FILE: C:\Users\Acer\Desktop\internship\FastAPI\IOMS\app\schema\customer.py
 ==================================================
-from decimal import Decimal
-
 from pydantic import BaseModel
 
 
-class ProductCreate(BaseModel):
+class CustomerCreate(BaseModel):
     name:str
-    sku:str
-    price:Decimal
-    quantity:int
-    category_id:int 
+    email:str
+    phone:str
 
 
-
-class ProductResponse(BaseModel):
+class CustomerResponse(BaseModel):
     id:int
     name:str
-    sku:str
-    price:Decimal
-    quantity:int
-    category_id:int 
+    email:str
+    phone:str
 
     class Config:
         from_attributes=True
