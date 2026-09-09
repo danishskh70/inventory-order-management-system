@@ -13,5 +13,5 @@ class PermissionResponse(BaseModel):
     name:str
 
     class Config:
-        from_attributes:True # type: ignore
+        from_attributes=True 
     

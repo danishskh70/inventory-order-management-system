@@ -14,6 +14,8 @@ from app.db.base import Base
 from app.model.user import User
 from app.model.role import Role
 from app.model.permission import Permission
+from app.model.role_permission import RolePermission
+
 
 
 # this is the Alembic Config object, which provides
