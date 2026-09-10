@@ -20,6 +20,7 @@ from app.model.product import Product
 from app.model.customer import Customer
 from app.model.supplier import Supplier
 from app.model.order import Order
+from app.model.order_item import OrderItem
 
 
 
