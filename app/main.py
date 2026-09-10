@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.router import category, customer, permission, product, role, role_permission, user
+from app.router import category, customer, permission, product, role, role_permission, supplier, user
 from app.model import user as user_model
 from app.model import role as role_model
 from app.model import permission as permission_model
@@ -15,6 +15,7 @@ app.include_router(role_permission.router)
 app.include_router(category.router)
 app.include_router(product.router)
 app.include_router(customer.router)
+app.include_router(supplier.router)
 
 @app.get("/")
 def root():
