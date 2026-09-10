@@ -1,0 +1,21 @@
+from fastapi import APIRouter, Depends
+from sqlalchemy.orm import Session
+
+from app.crud.departments import create_department, get_department, get_departments
+from app.db.session import get_db
+from app.schema.department import DepartmentCreate, DepartmentResponse
+
+
+router=APIRouter(prefix="/departments",tags=["Department"])
+
+@router.post("/",response_model=DepartmentResponse)
+def add_department(department:DepartmentCreate,db:Session=Depends(get_db)):
+    return create_department(department=department,db=db)
+
+@router.get("/{department_id}",response_model=DepartmentResponse)
+def read_department(department_id:int,db:Session=Depends(get_db)):
+    return get_department(department_id=department_id,db=db)
+
+@router.get("/",response_model=list[DepartmentResponse])
+def read_departments(db:Session=Depends(get_db)):
+    return get_departments(db)
