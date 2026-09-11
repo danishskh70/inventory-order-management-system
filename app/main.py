@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from app.router import audit_log, category, customer, department, order, order_item, permission, product, role, role_permission, stock_movement, supplier, user, warehouse
+from app.router import audit_log, auth, category, customer, department, order, order_item, permission, product, role, role_permission, stock_movement, supplier, user, warehouse
 from app.model import user as user_model
 from app.model import role as role_model
 from app.model import permission as permission_model
@@ -8,6 +8,7 @@ from app.model import role_permission as role_permission_model
 
 app = FastAPI()
 
+app.include_router(auth.router)
 app.include_router(user.router)
 app.include_router(role.router)
 app.include_router(permission.router)

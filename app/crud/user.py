@@ -3,10 +3,17 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
-from app.core.security import hash_password
+from app.core.security import hash_password, verify_password
 from app.model.user import User
 from app.schema.user import UserCreate
 
+def authenticate_user(db:Session,username:str,password:str):
+    user=db.query(User).filter(User.username==username).first()
+    if not user:
+        return None
+    if not verify_password(password,user.password):
+        return None
+    return user
 
 def create_user(db:Session,user:UserCreate):
     hash_pass=hash_password(password=user.password)
