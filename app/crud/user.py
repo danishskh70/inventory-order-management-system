@@ -29,7 +29,7 @@ def update_user(db:Session,user_id:int,user:UserCreate):
     if db_user:
         db_user.name=user.name 
         db_user.username=user.username 
-        db_user.password=user.password 
+        db_user.password=hash_password(user.password)
         db.commit()
         db.refresh(db_user)
     return db_user
