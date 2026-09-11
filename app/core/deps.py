@@ -23,3 +23,21 @@ def get_current_user(token:str=Depends(oauth2_scheme),db:Session=Depends(get_db)
     if not db_user:
         raise HTTPException(status_code=404,detail="User not Found / Exist")
     return db_user
+
+def require_permission(permission_name: str):
+    def dependency(current_user: User = Depends(get_current_user)):
+        if current_user.role_id is None:
+            raise HTTPException(status_code=403, detail="No role assigned")
+
+        role = current_user.role
+        if not role:
+            raise HTTPException(status_code=403, detail="Role not found")
+
+        permission_names = [perm.name for perm in role.permissions]
+
+        if permission_name not in permission_names:
+            raise HTTPException(status_code=403, detail="Not enough permissions")
+
+        return current_user
+
+    return dependency
