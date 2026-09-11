@@ -24,7 +24,7 @@ from app.model.order_item import OrderItem
 from app.model.stock_movement import StockMovement
 from app.model.audit_log import AuditLog
 from app.model.department import Department
-
+from app.model.warehouse import WareHouse
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

@@ -10,6 +10,6 @@ class DepartmentCreate(BaseModel):
 class DepartmentResponse(BaseModel):
     id:int
     name:str
-    parent_id:int
+    parent_id:Optional[int]=None
     class Config:
         from_attributes=True
