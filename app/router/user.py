@@ -10,6 +10,8 @@ from app.crud.user import create_user, delete_user, get_user, get_users, update_
 from app.db.session import get_db
 from app.model.user import User
 from app.schema.user import UserCreate, UserResponse
+from app.schema.user import AssignRole
+from app.crud.user import assign_role_to_user
 
 
 router=APIRouter(prefix="/users",tags=["Users"])
@@ -18,6 +20,10 @@ router=APIRouter(prefix="/users",tags=["Users"])
 def register_user(user:UserCreate,db:Session=Depends(get_db)):
     return create_user(db=db,user=user)
 
+
+@router.post("/{user_id}/role", response_model=UserResponse)
+def add_role_to_user(user_id: int, payload: AssignRole, db: Session = Depends(get_db)):
+    return assign_role_to_user(db=db, user_id=user_id, role_id=payload.role_id)
 
 @router.get("/{user_id}",response_model=UserResponse)
 def read_user(user_id:int,db:Session=Depends(get_db)):

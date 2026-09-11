@@ -10,5 +10,5 @@ class User(Base):
     name: Mapped[str] = mapped_column(String, nullable=False)
     username: Mapped[str] = mapped_column(String, unique=True, nullable=False)
     password: Mapped[str] = mapped_column(String, nullable=False)
-    role_id=Column(Integer,ForeignKey("roles.id"),nullable=True)
+    role_id: Mapped[int | None] = mapped_column(Integer, ForeignKey("roles.id"), nullable=True)
     role=relationship("Role")
