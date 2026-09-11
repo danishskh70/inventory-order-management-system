@@ -5,8 +5,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from app.core.deps import get_current_user
 from app.crud.user import create_user, delete_user, get_user, get_users, update_user
 from app.db.session import get_db
+from app.model.user import User
 from app.schema.user import UserCreate, UserResponse
 
 
@@ -22,7 +24,7 @@ def read_user(user_id:int,db:Session=Depends(get_db)):
     return get_user(db,user_id)
 
 @router.get("/",response_model=list[UserResponse])
-def read_users(db:Session=Depends(get_db)):
+def read_users(db:Session=Depends(get_db),current_user:User=Depends(get_current_user)):
     return get_users(db)
 
 @router.put("/{user_id}",response_model=UserResponse)
