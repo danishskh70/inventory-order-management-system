@@ -3,3 +3,5 @@ Get-ChildItem -Recurse -Filter order.py | ForEach-Object {
     Get-Content $_.FullName | Out-File output.txt -Append
     "" | Out-File output.txt -Append
 }
+
+uv run uvicorn app.main:app --reload

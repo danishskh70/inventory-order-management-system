@@ -3,12 +3,14 @@
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.security import hash_password
 from app.model.user import User
 from app.schema.user import UserCreate
 
 
 def create_user(db:Session,user:UserCreate):
-    db_user=User(name=user.name,username=user.username,password=user.password)
+    hash_pass=hash_password(password=user.password)
+    db_user=User(name=user.name,username=user.username,password=hash_pass)
     db.add(db_user)
     db.commit()
     db.refresh(db_user)
@@ -25,9 +27,9 @@ def update_user(db:Session,user_id:int,user:UserCreate):
     if not db_user:
         raise HTTPException(status_code=404,detail="User Not Found")
     if db_user:
-        db_user.name=user.name # type: ignore
-        db_user.username=user.username # type: ignore
-        db_user.password=user.password # type: ignore
+        db_user.name=user.name 
+        db_user.username=user.username 
+        db_user.password=user.password 
         db.commit()
         db.refresh(db_user)
     return db_user
