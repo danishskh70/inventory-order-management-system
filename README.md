@@ -53,7 +53,6 @@ Core learning goals complete: JWT auth, full RBAC enforcement across all routes 
 
 Not yet built, known gaps:
 - No pagination on list endpoints
-- No automated tests — verified manually via Swagger/Postman
 - Stock movements are a separate manual endpoint, not auto-triggered by the order flow
 - A few legacy/generic permission names from early testing remain unused alongside the newer, specific ones
 
