@@ -12,7 +12,7 @@ from app.schema.warehouse import WareHouseCreate, WareHouseResponse
 router=APIRouter(prefix="/warehouses",tags=["WareHouse"])
 
 @router.post("/",response_model=WareHouseResponse)
-def add_warehouse(warehouse:WareHouseCreate,db:Session=Depends(get_db)):
+def add_warehouse(warehouse:WareHouseCreate,db:Session=Depends(get_db),current_user: User = Depends(get_current_user)):
     return create_warehouse(warehouse=warehouse,db=db)
 
 @router.get("/{warehouse_id}",response_model=WareHouseResponse)

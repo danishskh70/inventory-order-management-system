@@ -11,7 +11,7 @@ from app.schema.customer import CustomerCreate, CustomerResponse
 router=APIRouter(prefix="/customers",tags=["Customers"])
 
 @router.post("/",response_model=CustomerResponse)
-def add_customer(customer:CustomerCreate,db:Session=Depends(get_db)):
+def add_customer(customer:CustomerCreate,db:Session=Depends(get_db),current_user: User = Depends(get_current_user)):
     return create_customer(db=db,customer=customer)
 
 @router.get("/{customer_id}",response_model=CustomerResponse)

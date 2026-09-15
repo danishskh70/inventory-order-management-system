@@ -11,7 +11,7 @@ from app.schema.stock_movement import StockMovementCreate, StockMovementResponse
 router=APIRouter(prefix="/stock_movements",tags=["Stock Movement"])
 
 @router.post("/",response_model=StockMovementResponse)
-def add_stock_movement(stock_movement:StockMovementCreate,db:Session=Depends(get_db)):
+def add_stock_movement(stock_movement:StockMovementCreate,db:Session=Depends(get_db),current_user: User = Depends(get_current_user)):
     return create_stock_movement(stock_movement=stock_movement,db=db)
 
 @router.get("/{stock_movement_id}",response_model=StockMovementResponse)

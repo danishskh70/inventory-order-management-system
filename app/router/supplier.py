@@ -10,7 +10,7 @@ from app.schema.supplier import SupplierCreate, SupplierResponse
 
 router=APIRouter(prefix="/suppliers",tags=["Suppliers"])
 @router.post("/",response_model=SupplierResponse)
-def add_supplier(supplier:SupplierCreate,db:Session=Depends(get_db)):
+def add_supplier(supplier:SupplierCreate,db:Session=Depends(get_db),current_user: User = Depends(get_current_user)):
     return create_supplier(db=db,supplier=supplier)
 
 @router.get("/{supplier_id}",response_model=SupplierResponse)

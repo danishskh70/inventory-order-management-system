@@ -14,7 +14,7 @@ from app.schema.category import CategoryCreate, CategoryResponse
 router = APIRouter(prefix="/categories", tags=["Categories"])
 
 @router.post("/",response_model=CategoryResponse)
-def add_category(category:CategoryCreate,db:Session=Depends(get_db)):
+def add_category(category:CategoryCreate,db:Session=Depends(get_db),current_user: User = Depends(get_current_user)):
     return create_category(db=db,category=category)
 
 @router.get("/{category_id}",response_model=CategoryResponse)

@@ -22,11 +22,11 @@ def register_user(user:UserCreate,db:Session=Depends(get_db)):
 
 
 @router.post("/{user_id}/role", response_model=UserResponse)
-def add_role_to_user(user_id: int, payload: AssignRole, db: Session = Depends(get_db)):
+def add_role_to_user(user_id: int, payload: AssignRole, db: Session = Depends(get_db),current_user: User = Depends(get_current_user)):
     return assign_role_to_user(db=db, user_id=user_id, role_id=payload.role_id)
 
 @router.get("/{user_id}",response_model=UserResponse)
-def read_user(user_id:int,db:Session=Depends(get_db)):
+def read_user(user_id:int,db:Session=Depends(get_db),current_user: User = Depends(get_current_user)):
     return get_user(db,user_id)
 
 @router.get("/",response_model=list[UserResponse])

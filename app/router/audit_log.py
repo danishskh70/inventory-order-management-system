@@ -11,7 +11,7 @@ from app.schema.audit_log import AuditLogCreate, AuditLogResponse
 router=APIRouter(prefix="/audit_logs",tags=["Audit Logs"])
 
 @router.post("/",response_model=AuditLogResponse)
-def add_audit_log(audit_log:AuditLogCreate,db:Session=Depends(get_db)):
+def add_audit_log(audit_log:AuditLogCreate,db:Session=Depends(get_db),current_user: User = Depends(get_current_user)):
     return create_audit_log(audit_log=audit_log,db=db)
 
 @router.get("/{audit_log_id}",response_model=AuditLogResponse)

@@ -11,7 +11,7 @@ from app.schema.department import DepartmentCreate, DepartmentResponse
 router=APIRouter(prefix="/departments",tags=["Department"])
 
 @router.post("/",response_model=DepartmentResponse)
-def add_department(department:DepartmentCreate,db:Session=Depends(get_db)):
+def add_department(department:DepartmentCreate,db:Session=Depends(get_db),current_user: User = Depends(get_current_user)):
     return create_department(department=department,db=db)
 
 @router.get("/{department_id}",response_model=DepartmentResponse)
