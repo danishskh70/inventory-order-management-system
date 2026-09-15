@@ -2,8 +2,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from app.core.deps import get_current_user
 from app.crud.warehouse import create_warehouse, get_warehouse, get_warehouses
 from app.db.session import get_db
+from app.model.user import User
 from app.schema.warehouse import WareHouseCreate, WareHouseResponse
 
 
@@ -14,9 +16,9 @@ def add_warehouse(warehouse:WareHouseCreate,db:Session=Depends(get_db)):
     return create_warehouse(warehouse=warehouse,db=db)
 
 @router.get("/{warehouse_id}",response_model=WareHouseResponse)
-def read_warehouse(warehouse_id:int,db:Session=Depends(get_db)):
+def read_warehouse(warehouse_id:int,db:Session=Depends(get_db),current_user:User=Depends(get_current_user)):
     return get_warehouse(warehouse_id=warehouse_id,db=db)
 
 @router.get("/",response_model=list[WareHouseResponse])
-def read_warehouses(db:Session=Depends(get_db)):
+def read_warehouses(db:Session=Depends(get_db),current_user:User=Depends(get_current_user)):
     return get_warehouses(db=db)

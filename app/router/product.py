@@ -6,7 +6,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-from app.core.deps import require_permission
+from app.core.deps import get_current_user, require_permission
 from app.crud.product import create_product, get_product, get_products
 from app.db.session import get_db
 from app.model.user import User
@@ -22,9 +22,9 @@ def add_product(product:ProductCreate,db:Session=Depends(get_db),current_user:Us
 
 
 @router.get("/{product_id}",response_model=ProductResponse)
-def read_product(product_id:int,db:Session=Depends(get_db)):
+def read_product(product_id:int,db:Session=Depends(get_db),current_user:User=Depends(get_current_user)):
     return get_product(product_id=product_id,db=db)
 
 @router.get("/",response_model=list[ProductResponse])
-def read_products(db:Session=Depends(get_db)):
+def read_products(db:Session=Depends(get_db),current_user:User=Depends(get_current_user)):
     return get_products(db=db)
