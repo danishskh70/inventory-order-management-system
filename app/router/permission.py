@@ -4,8 +4,10 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
+from app.core.deps import require_permission
 from app.crud.permission import create_permission, get_permission, get_permissions
 from app.db.session import get_db
+from app.model.user import User
 from app.schema.permission import PermissionCreate, PermissionResponse
 
 
@@ -14,7 +16,7 @@ router = APIRouter(prefix="/permissions", tags=["Permissions"])
 
 
 @router.post("/",response_model=PermissionResponse)
-def add_permissions(permit:PermissionCreate,db:Session=Depends(get_db)):
+def add_permissions(permit:PermissionCreate,db:Session=Depends(get_db),current_user:User=Depends(require_permission("roles:manage"))):
     return create_permission(db=db,permit=permit)
 
 
