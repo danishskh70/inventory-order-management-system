@@ -7,7 +7,7 @@ from pydantic import BaseModel
 class OrderCreate(BaseModel):
     customer_id:int
     status:str
-    total_amount:Decimal
+
 
 class OrderResponse(BaseModel):
     id:int

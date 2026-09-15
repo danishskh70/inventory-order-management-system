@@ -7,7 +7,7 @@ from app.schema.order import OrderCreate
 
 
 def create_order(db:Session,order:OrderCreate):
-    db_order=Order(customer_id=order.customer_id,status=order.status,total_amount=order.total_amount)
+    db_order=Order(customer_id=order.customer_id,status=order.status,total_amount=0)
     db.add(db_order)
     db.commit()
     db.refresh(db_order)

@@ -1,4 +1,5 @@
 from sqlalchemy import Column, DateTime, ForeignKey, Integer, Numeric, String, func
+from sqlalchemy.orm import relationship
 
 from app.db.base import Base
 from app.model.customer import Customer  
@@ -11,3 +12,4 @@ class Order(Base):
     status=Column(String)
     order_date=Column(DateTime(timezone=True),server_default=func.now())
     total_amount=Column(Numeric(10,2))
+    order_items = relationship("OrderItem", back_populates="order")
